@@ -1,7 +1,7 @@
 # telescope-plugins
 
 Telescope-plugins is a small [telescope](https://github.com/nvim-telescope/telescope.nvim) extension,
-that lets you list all of your installed (packer)[https://github.com/wbthomason/packer.nvim] plugins.
+that lets you list all of your installed [packer](https://github.com/wbthomason/packer.nvim) plugins.
 You can fuzzy search and select a plugin, to open the github repo in your browser.
 
 This is the first nvim plugin I have made, so expect errors.
