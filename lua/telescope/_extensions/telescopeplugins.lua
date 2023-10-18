@@ -51,6 +51,14 @@ function GetPlugins()
     return plugins
 end
 
+function open_url(url)
+    if (package.config:sub(1,1) == "\\") then
+        os.execute('start "" "' .. url .. '"')
+    else
+        os.execute('open "" "' .. url .. '"')
+  end
+end
+
 
 return require("telescope").register_extension {
     exports = {
@@ -73,7 +81,7 @@ return require("telescope").register_extension {
                     actions.select_default:replace(function()
                         actions.close(prompt_bufnr)
                         local selection = action_state.get_selected_entry()
-                        print(selection.value[2])
+                        open_url(selection[2])
                     end)
                     return true
                 end,
