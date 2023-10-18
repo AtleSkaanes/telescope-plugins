@@ -6,31 +6,28 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 
 function scandir(directory)
+    dirs = {}
     if (package.config:sub(1,1) == "\\") then
-        for dir in io.popen('dir "'..directory..'" /b'):lines() do print(dir) end
+        for dir in io.popen('dir "'..directory..'" /b'):lines() do table.insert(a, dir) end
     else
-        for dir in io.popen('ls -pa "'..directory..'" | grep -v /'):lines() do print(dir) end
+        for dir in io.popen('ls -pa "'..directory..'" | grep -v /'):lines() do table.insert(a, dir) end
     end
-
+    return dirs
 end
 
-local get_plugins = function ()
-    local path = vim.fn.stdpath("data")+"/site/pack/packer"
-    for file in lfs.dir(path) do
-        if lfs.attributes(file,"mode") == "directory" then print("found dir, "..file," containing:")
-            for sub in lfs.dir(""..file) do
-                print("",l)
-            end
-        end
+function get_plugins()
+    optPath = vim.fn.stdpath("data")..'/side/pack/packer/opt'
+    startPath = vim.fn.stdpath("data")..'/side/pack/packer/start'
+    for dir in scandir(startPath) do
+        print(dir)
     end
-
 end
 
 
 return require("telescope").register_extension {
     exports = {
         ListPlugins = function(opts)
-            scandir(vim.fn.stdpath("data"))
+            get_plugins()
             opts = opts or {}
             pickers.new(opts, {
                 prompt_title = "plugins",
