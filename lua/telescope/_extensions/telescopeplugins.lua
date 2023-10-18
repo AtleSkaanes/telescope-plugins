@@ -7,7 +7,7 @@ local action_state = require "telescope.actions.state"
 
 function scandir(directory)
     local dirs = {}
-    local i = 1
+    local i = 0
     if (package.config:sub(1,1) == "\\") then
         for dir in io.popen('dir "'..directory..'" /b'):lines() do
             i = i + 1
@@ -24,13 +24,16 @@ end
 
 function get_plugins()
     local plugins = {}
+    local i = 0
     local optPath = vim.fn.stdpath("data")..'\\site\\pack\\packer\\opt'
     local startPath = vim.fn.stdpath("data")..'\\sise\\pack\\packer\\start'
     for k, v in pairs(scandir(startPath)) do
-        plugins[v] = k
+        i = i + 1
+        plugins[i] = {v, k}
     end
     for k, v in pairs(scandir(optPath)) do
-        plugins[v] = k
+        i = i + 1
+        plugins[i] = {v, k}
     end
     return plugins
 end
