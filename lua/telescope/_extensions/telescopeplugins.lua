@@ -7,9 +7,9 @@ local action_state = require "telescope.actions.state"
 
 function scandir(directory)
     if (package.config:sub(1,1) == "\\") then
-        for dir in io.popen([[dir "C:\Program Files\" /b]]):lines() do print(dir) end
+        for dir in io.popen('dir "'..directory..'" /b'):lines() do print(dir) end
     else
-        for dir in io.popen([[ls -pa /home/user | grep -v /]]):lines() do print(dir) end
+        for dir in io.popen('ls -pa "'..directory..'" | grep -v /'):lines() do print(dir) end
     end
 
 end
