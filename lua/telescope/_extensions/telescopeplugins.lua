@@ -23,28 +23,28 @@ function scandir(directory)
 end
 
 function get_plugins()
+    local plugins = {}
     local optPath = vim.fn.stdpath("data")..'\\site\\pack\\packer\\opt'
-    local startPath = vim.fn.stdpath("data")..'\\site\\pack\\packer\\start'
+    local startPath = vim.fn.stdpath("data")..'\\sise\\pack\\packer\\start'
     for k, v in pairs(scandir(startPath)) do
-        print(v)
+        plugins[v] = k
     end
+    for k, v in pairs(scandir(optPath)) do
+        plugins[v] = k
+    end
+    return plugins
 end
 
 
 return require("telescope").register_extension {
     exports = {
         ListPlugins = function(opts)
-            get_plugins()
             opts = opts or {}
             pickers.new(opts, {
                 prompt_title = "plugins",
                 sorter = sorters.get_generic_fuzzy_sorter(),
                 finder = finders.new_table {
-                    results = {
-                        { "red", "#ff0000" },
-                        { "green", "#00ff00" },
-                        { "blue", "#0000ff" },
-                    },
+                    results = get_plugins(),
                     entry_maker = function(entry)
                         return {
                             value = entry,
