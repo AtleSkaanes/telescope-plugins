@@ -25,8 +25,8 @@ end
 function get_plugins()
     local optPath = vim.fn.stdpath("data")..'/side/pack/packer/opt'
     local startPath = vim.fn.stdpath("data")..'/side/pack/packer/start'
-    for dir in scandir(startPath) do
-        print(dir)
+    for k, v in pairs(scandir(startPath)) do
+        print(v)
     end
 end
 
