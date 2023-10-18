@@ -30,7 +30,7 @@ return require("telescope").register_extension {
                     end)
                     return true
                 end,
-            })
+            }):find()
         end,
     }
 }
