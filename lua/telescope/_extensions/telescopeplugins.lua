@@ -5,7 +5,7 @@ local sorters = require("telescope.sorters")
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 
-function scandir(directory)
+function ScanDir(directory)
     local dirs = {}
     local i = 0
     if (package.config:sub(1,1) == "\\") then
@@ -22,20 +22,31 @@ function scandir(directory)
     return dirs
 end
 
-function get_plugins()
+function ReadFile(file)
+    local f = assert(io.open(file, "rb"))
+    local content = f:read("*all")
+    f:close()
+    return content
+end
+
+function GetPlugins()
     local plugins = {}
     local i = 0
     local optPath = vim.fn.stdpath("data")..'\\site\\pack\\packer\\opt'
     local startPath = vim.fn.stdpath("data")..'\\site\\pack\\packer\\start'
-    for k, v in pairs(scandir(startPath)) do
-        print(v)
+    for k, v in pairs(ScanDir(startPath)) do
         i = i + 1
-        plugins[i] = {v, k}
+        plugins[i] = {v, startPath..'\\'..v}
     end
-    for k, v in pairs(scandir(optPath)) do
-        print(v)
+    for k, v in pairs(ScanDir(optPath)) do
         i = i + 1
-        plugins[i] = {v, k}
+        plugins[i] = {v, optPath..'\\'..v}
+    end
+    for k, v in pairs(plugins) do
+        local c = ReadFile(v[2]..'\\.git\\config')
+        local regex = "http[a-zA-Z:/._0-9\\-]*"
+        local s = string.sub(c, string.find(c, regex))
+        plugins[k][2] = s
     end
     return plugins
 end
@@ -49,7 +60,7 @@ return require("telescope").register_extension {
                 prompt_title = "plugins",
                 sorter = sorters.get_generic_fuzzy_sorter(),
                 finder = finders.new_table {
-                    results = get_plugins(),
+                    results = GetPlugins(),
                     entry_maker = function(entry)
                         return {
                             value = entry,
