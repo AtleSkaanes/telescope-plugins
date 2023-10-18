@@ -19,6 +19,9 @@ return require("telescope").register_extension {
             pickers.new(opts, {
                 prompt_title = "plugins",
                 sorter = sorters.get_generic_fuzzy_sorter(),
+                finder = finders.new_table {
+                    results = { "red", "green", "blue" }
+                },
                 attach_mappings = function(prompt_bufnr, map)
                     actions.select_default:replace(function()
                         actions.close(prompt_bufnr)
