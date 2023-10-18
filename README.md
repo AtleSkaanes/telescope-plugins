@@ -25,7 +25,7 @@ require('telescope').load_extension('telescopeplugins')
 
 Optionally, you can bind it to a custom keymapping (There is none by default)
 ```vim
-vim.keymap.set('n', '<leader>p', '<Cmd>lua require('telescope').extensions.telescopeplugins.ListPlugins()<CR>', {}))
+vim.keymap.set('n', '<leader>p', "<Cmd>lua require('telescope').extensions.telescopeplugins.ListPlugins()<CR>", {}))
 ```
 
 ### Features
