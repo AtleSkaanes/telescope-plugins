@@ -15,7 +15,7 @@ return require("telescope").register_extension {
     exports = {
         ListPlugins = function(opts)
             opts = opts or {}
-
+            print("should work")
             pickers.new(opts, {
                 prompt_title = "plugins",
                 sorter = sorters.get_generic_fuzzy_sorter(),
