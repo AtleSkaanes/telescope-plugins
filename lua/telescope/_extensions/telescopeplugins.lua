@@ -36,7 +36,7 @@ return require("telescope").register_extension {
                     actions.select_default:replace(function()
                         actions.close(prompt_bufnr)
                         local selection = action_state.get_selected_entry()
-                        print(selection[2])
+                        print(selection.value[2])
                     end)
                     return true
                 end,
