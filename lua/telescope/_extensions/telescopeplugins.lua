@@ -28,10 +28,12 @@ function get_plugins()
     local optPath = vim.fn.stdpath("data")..'\\site\\pack\\packer\\opt'
     local startPath = vim.fn.stdpath("data")..'\\sise\\pack\\packer\\start'
     for k, v in pairs(scandir(startPath)) do
+        print(v)
         i = i + 1
         plugins[i] = {v, k}
     end
     for k, v in pairs(scandir(optPath)) do
+        print(v)
         i = i + 1
         plugins[i] = {v, k}
     end
