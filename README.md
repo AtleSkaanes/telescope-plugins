@@ -23,15 +23,15 @@ When it is installed, you need to bind the extension to telescope
 require('telescope').load_extension('telescopeplugins')
 ```
 
-Optionally, you can bind it to a custom keymapping (There is none by default)
+Optionally, you can bind it to a custom keymapping (There is none by default).
+Here is an example of a remap:
 ```vim
 vim.keymap.set('n', '<leader>p', "<Cmd>lua require('telescope').extensions.telescopeplugins.ListPlugins()<CR>", {}))
 ```
 
 ### Features
-- [ ] Get plugins
-- [ ] List plugins
-- [ ] Packer support
+- [x] List plugins
+- [x] Packer support
 - [ ] Plug support
 - [ ] Dein support
 - [ ] Lazy.nvim support

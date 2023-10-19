@@ -32,18 +32,18 @@ end
 function GetPlugins()
     local plugins = {}
     local i = 0
-    local optPath = vim.fn.stdpath("data")..'\\site\\pack\\packer\\opt'
-    local startPath = vim.fn.stdpath("data")..'\\site\\pack\\packer\\start'
+    local optPath = vim.fn.stdpath("data")..'/site/pack/packer/opt'
+    local startPath = vim.fn.stdpath("data")..'/site/pack/packer/start'
     for k, v in pairs(ScanDir(startPath)) do
         i = i + 1
-        plugins[i] = {v, startPath..'\\'..v}
+        plugins[i] = {v, '', startPath..'/'..v}
     end
     for k, v in pairs(ScanDir(optPath)) do
         i = i + 1
-        plugins[i] = {v, optPath..'\\'..v}
+        plugins[i] = {v, '', optPath..'/'..v}
     end
     for k, v in pairs(plugins) do
-        local c = ReadFile(v[2]..'\\.git\\config')
+        local c = ReadFile(v[3]..'/.git/config')
         local regex = "http[a-zA-Z:/._0-9\\-]*"
         local s = string.sub(c, string.find(c, regex))
         plugins[k][2] = s
@@ -52,12 +52,11 @@ function GetPlugins()
 end
 
 function OpenUrl(url)
-    print(url)
     if (package.config:sub(1,1) == "\\") then
         os.execute('start "" "' .. url .. '"')
     else
         os.execute('open "" "' .. url .. '"')
-  end
+    end
 end
 
 
@@ -75,14 +74,16 @@ return require("telescope").register_extension {
                             value = entry,
                             display = entry[1],
                             ordinal = entry[1],
+                            path = entry[3].."/README.md"
                         }
                     end
                 },
+                previewer = conf.file_previewer(opts),
                 attach_mappings = function(prompt_bufnr, map)
                     actions.select_default:replace(function()
                         actions.close(prompt_bufnr)
                         local selection = action_state.get_selected_entry()
-                        OpenUrl(selection[2])
+                        OpenUrl(selection.value[2])
                     end)
                     return true
                 end,
@@ -90,3 +91,4 @@ return require("telescope").register_extension {
         end,
     }
 }
+
