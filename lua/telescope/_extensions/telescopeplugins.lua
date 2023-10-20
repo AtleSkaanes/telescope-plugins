@@ -43,13 +43,12 @@ function GetPlugins()
         plugins[i] = {v, '', optPath..'/'..v}
     end
     for k, v in pairs(plugins) do
-        print(v[3])
         local c = ReadFile(v[3]..'/.git/config')
         local regex = "http[a-zA-Z:/._0-9\\-]*"
         local url_pos = string.find(c, regex)
-        -- Can't find the url, remove plugin from list
+        -- Can't find the url, add nil instead and do error handling futher down
         if url_pos == nil then
-            table.remove(plugins, k);
+            plugins[k][2] = nil
         else
             plugins[k][2] = string.sub(c, url_pos)
         end
@@ -58,6 +57,11 @@ function GetPlugins()
 end
 
 function OpenUrl(url)
+    if url == nil then
+        print "Can't find link to plugin repo"
+        return
+    end
+
     if (package.config:sub(1,1) == "\\") then
         os.execute('start "" "' .. url .. '"')
     else
