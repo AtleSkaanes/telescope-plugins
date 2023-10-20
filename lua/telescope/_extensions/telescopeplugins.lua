@@ -76,11 +76,19 @@ return require("telescope").register_extension {
                 finder = finders.new_table {
                     results = GetPlugins(),
                     entry_maker = function(entry)
+                        -- Some plugins use README.markdown
+                        local readme_path = entry[3] .. '/README.md'
+                        for _, file in pairs(ScanDir(entry[3])) do
+                            if file == 'README.markdown' then
+                                readme_path = entry[3] .. '/README.markdown'
+                            end
+                        end
+
                         return {
                             value = entry,
                             display = entry[1],
                             ordinal = entry[1],
-                            path = entry[3].."/README.md"
+                            path = readme_path
                         }
                     end
                 },
