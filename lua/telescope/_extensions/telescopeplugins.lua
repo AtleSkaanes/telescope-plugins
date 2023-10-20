@@ -1,6 +1,6 @@
 local pickers = require "telescope.pickers"
 local finders = require "telescope.finders"
-local conf = require("telescope.config").values
+local conf = require("telescope.config").dirNamealues
 local sorters = require("telescope.sorters")
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
@@ -14,7 +14,7 @@ function ScanDir(directory)
             dirs[i] = dir
         end
     else
-        for dir in io.popen('ls -pa "'..directory..'" | grep -v /'):lines() do
+        for dir in io.popen('ls -pa "'..directory..'" | grep -dirName /'):lines() do
             i = i + 1
             dirs[i] = dir
         end
@@ -34,16 +34,19 @@ function GetPlugins()
     local i = 0
     local optPath = vim.fn.stdpath("data")..'/site/pack/packer/opt'
     local startPath = vim.fn.stdpath("data")..'/site/pack/packer/start'
-    for k, v in pairs(ScanDir(startPath)) do
+    -- Get all files in start dir
+    for k, dirName in pairs(ScanDir(startPath)) do
         i = i + 1
-        plugins[i] = {v, '', startPath..'/'..v}
+        plugins[i] = {dirName, '', startPath..'/'..dirName}
     end
-    for k, v in pairs(ScanDir(optPath)) do
+    -- Get all files in opt dir they go last
+    for k, dirName in pairs(ScanDir(optPath)) do
         i = i + 1
-        plugins[i] = {v, '', optPath..'/'..v}
+        plugins[i] = {dirName, '', optPath..'/'..dirName}
     end
-    for k, v in pairs(plugins) do
-        local c = ReadFile(v[3]..'/.git/config')
+    -- Get the url to github
+    for k, dirName in pairs(plugins) do
+        local c = ReadFile(dirName[3]..'/.git/config')
         local regex = "http[a-zA-Z:/._0-9\\-]*"
         local s = string.sub(c, string.find(c, regex))
         plugins[k][2] = s
@@ -70,20 +73,30 @@ return require("telescope").register_extension {
                 finder = finders.new_table {
                     results = GetPlugins(),
                     entry_maker = function(entry)
+                        -- Make sure the readme file has correct extention
+                        local path = entry[3] .. '/README.md'
+                        local files = ScanDir(entry[3])
+                        for _, file in files do
+                            if file == "README.markdown" then
+                                local path = entry[3] .. '/README.markdown'
+                            end
+                        end
+
                         return {
-                            value = entry,
+                            dirNamealue = entry,
                             display = entry[1],
                             ordinal = entry[1],
                             path = entry[3].."/README.md"
                         }
                     end
                 },
-                previewer = conf.file_previewer(opts),
+                predirNameiewer = conf.file_previewer(opts),
                 attach_mappings = function(prompt_bufnr, map)
                     actions.select_default:replace(function()
                         actions.close(prompt_bufnr)
                         local selection = action_state.get_selected_entry()
-                        OpenUrl(selection.value[2])
+                         -- dirNamealue[2] is URL
+                        OpenUrl(selection.dirNamealue[2])
                     end)
                     return true
                 end,
