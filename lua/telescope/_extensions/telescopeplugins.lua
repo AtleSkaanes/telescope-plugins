@@ -1,6 +1,6 @@
 local pickers = require "telescope.pickers"
 local finders = require "telescope.finders"
-local conf = require("telescope.config").dirNamealues
+local conf = require("telescope.config").values
 local sorters = require("telescope.sorters")
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
@@ -14,7 +14,7 @@ function ScanDir(directory)
             dirs[i] = dir
         end
     else
-        for dir in io.popen('ls -pa "'..directory..'" | grep -dirName /'):lines() do
+        for dir in io.popen('ls -pa "'..directory..'" | grep -v /'):lines() do
             i = i + 1
             dirs[i] = dir
         end
@@ -34,22 +34,25 @@ function GetPlugins()
     local i = 0
     local optPath = vim.fn.stdpath("data")..'/site/pack/packer/opt'
     local startPath = vim.fn.stdpath("data")..'/site/pack/packer/start'
-    -- Get all files in start dir
-    for k, dirName in pairs(ScanDir(startPath)) do
+    for k, v in pairs(ScanDir(startPath)) do
         i = i + 1
-        plugins[i] = {dirName, '', startPath..'/'..dirName}
+        plugins[i] = {v, '', startPath..'/'..v}
     end
-    -- Get all files in opt dir they go last
-    for k, dirName in pairs(ScanDir(optPath)) do
+    for k, v in pairs(ScanDir(optPath)) do
         i = i + 1
-        plugins[i] = {dirName, '', optPath..'/'..dirName}
+        plugins[i] = {v, '', optPath..'/'..v}
     end
-    -- Get the url to github
-    for k, dirName in pairs(plugins) do
-        local c = ReadFile(dirName[3]..'/.git/config')
+    for k, v in pairs(plugins) do
+        print(v[3])
+        local c = ReadFile(v[3]..'/.git/config')
         local regex = "http[a-zA-Z:/._0-9\\-]*"
-        local s = string.sub(c, string.find(c, regex))
-        plugins[k][2] = s
+        local url_pos = string.find(c, regex)
+        -- Can't find the url, remove plugin from list
+        if url_pos == nil then
+            table.remove(plugins, k);
+        else
+            plugins[k][2] = string.sub(c, url_pos)
+        end
     end
     return plugins
 end
@@ -73,30 +76,20 @@ return require("telescope").register_extension {
                 finder = finders.new_table {
                     results = GetPlugins(),
                     entry_maker = function(entry)
-                        -- Make sure the readme file has correct extention
-                        local path = entry[3] .. '/README.md'
-                        local files = ScanDir(entry[3])
-                        for _, file in files do
-                            if file == "README.markdown" then
-                                local path = entry[3] .. '/README.markdown'
-                            end
-                        end
-
                         return {
-                            dirNamealue = entry,
+                            value = entry,
                             display = entry[1],
                             ordinal = entry[1],
                             path = entry[3].."/README.md"
                         }
                     end
                 },
-                predirNameiewer = conf.file_previewer(opts),
+                previewer = conf.file_previewer(opts),
                 attach_mappings = function(prompt_bufnr, map)
                     actions.select_default:replace(function()
                         actions.close(prompt_bufnr)
                         local selection = action_state.get_selected_entry()
-                         -- dirNamealue[2] is URL
-                        OpenUrl(selection.dirNamealue[2])
+                        OpenUrl(selection.value[2])
                     end)
                     return true
                 end,
