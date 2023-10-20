@@ -34,24 +34,34 @@ function GetPlugins()
     local i = 0
     local optPath = vim.fn.stdpath("data")..'/site/pack/packer/opt'
     local startPath = vim.fn.stdpath("data")..'/site/pack/packer/start'
-    for k, v in pairs(ScanDir(startPath)) do
+    for _, v in pairs(ScanDir(startPath)) do
         i = i + 1
         plugins[i] = {v, '', startPath..'/'..v}
     end
-    for k, v in pairs(ScanDir(optPath)) do
+    for _, v in pairs(ScanDir(optPath)) do
         i = i + 1
         plugins[i] = {v, '', optPath..'/'..v}
     end
     for k, v in pairs(plugins) do
         local c = ReadFile(v[3]..'/.git/config')
         local regex = "http[a-zA-Z:/._0-9\\-]*"
-        local s = string.sub(c, string.find(c, regex))
-        plugins[k][2] = s
+        local url_pos = string.find(c, regex)
+        -- Can't find the url, add nil instead and do error handling futher down
+        if url_pos == nil then
+            plugins[k][2] = nil
+        else
+            plugins[k][2] = string.sub(c, url_pos)
+        end
     end
     return plugins
 end
 
 function OpenUrl(url)
+    if url == nil then
+        print "Can't find link to plugin repo"
+        return
+    end
+
     if (package.config:sub(1,1) == "\\") then
         os.execute('start "" "' .. url .. '"')
     else
@@ -70,11 +80,19 @@ return require("telescope").register_extension {
                 finder = finders.new_table {
                     results = GetPlugins(),
                     entry_maker = function(entry)
+                        -- Some plugins use README.markdown
+                        local readme_path = entry[3] .. '/README.md'
+                        for _, file in pairs(ScanDir(entry[3])) do
+                            if file == 'README.markdown' then
+                                readme_path = entry[3] .. '/README.markdown'
+                            end
+                        end
+
                         return {
                             value = entry,
                             display = entry[1],
                             ordinal = entry[1],
-                            path = entry[3].."/README.md"
+                            path = readme_path
                         }
                     end
                 },
