@@ -8,7 +8,7 @@ This is the first nvim plugin I have made, so expect errors.
 
 ### Dependencies
 - [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
-- [packer.nvim](https://github.com/wbthomason/packer.nvim)
+- A [supported](#Support) plugin manager
 
 
 ### Installation
