@@ -29,9 +29,8 @@ Here is an example of a remap:
 vim.keymap.set('n', '<leader>p', "<Cmd>lua require('telescope').extensions.telescopeplugins.ListPlugins()<CR>", {}))
 ```
 
-### Features
-- [x] List plugins
+### Support
 - [x] Packer support
+- [x] Lazy.nvim support
 - [ ] Plug support
 - [ ] Dein support
-- [x] Lazy.nvim support
