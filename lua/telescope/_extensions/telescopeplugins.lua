@@ -32,16 +32,30 @@ end
 function GetPlugins()
     local plugins = {}
     local i = 0
-    local optPath = vim.fn.stdpath("data")..'/site/pack/packer/opt'
-    local startPath = vim.fn.stdpath("data")..'/site/pack/packer/start'
-    for _, v in pairs(ScanDir(startPath)) do
-        i = i + 1
-        plugins[i] = {v, '', startPath..'/'..v}
+    --local optPath = vim.fn.stdpath("data")..'/site/pack/packer/opt'
+    --local startPath = vim.fn.stdpath("data")..'/site/pack/packer/start'
+    --local lazyPath = vim.fn.stdpath("data")..'/lazy'
+    local paths = {
+        vim.fn.stdpath("data")..'/site/pack/packer/opt',
+        vim.fn.stdpath("data")..'/site/pack/packer/start',
+        vim.fn.stdpath("data")..'/lazy'
+    }
+    for _, path in pairs(paths) do
+        for _, v in pairs(ScanDir(path)) do
+            if v ~= "readme" then
+                i = i + 1
+                plugins[i] = {v, '', path..'/'..v}
+            end
+        end
     end
-    for _, v in pairs(ScanDir(optPath)) do
-        i = i + 1
-        plugins[i] = {v, '', optPath..'/'..v}
-    end
+    --for _, v in pairs(ScanDir(startPath)) do
+    --    i = i + 1
+    --    plugins[i] = {v, '', startPath..'/'..v}
+    --end
+    --for _, v in pairs(ScanDir(optPath)) do
+    --    i = i + 1
+    --    plugins[i] = {v, '', optPath..'/'..v}
+    --end
     for k, v in pairs(plugins) do
         local c = ReadFile(v[3]..'/.git/config')
         local regex = "http[a-zA-Z:/._0-9\\-]*"
