@@ -34,4 +34,4 @@ vim.keymap.set('n', '<leader>p', "<Cmd>lua require('telescope').extensions.teles
 - [x] Packer support
 - [ ] Plug support
 - [ ] Dein support
-- [ ] Lazy.nvim support
+- [x] Lazy.nvim support
